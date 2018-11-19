@@ -17,7 +17,7 @@ test_logger.warning('python-logstash: test logstash warning message.')
 extra = {
     'test_string': 'python version: ' + repr(sys.version_info),
     'test_boolean': True,
-    'test_dict': {'a': 1, 'b': 'c'},
+    'test_dict': {'a': 1, 'b': set(['a'])},
     'test_float': 1.23,
     'test_integer': 123,
     'test_list': [1, 2, '3'],
