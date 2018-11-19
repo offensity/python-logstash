@@ -20,7 +20,7 @@ class LogstashFormatterBase(logging.Formatter):
         else:
             self.host = socket.gethostname()
 
-    def get_extra_fields(self, record):
+    def get_extra_fields(self, record, first=True):
         # The list contains all the attributes listed in
         # http://docs.python.org/library/logging.html#logrecord-attributes
         skip_list = (
@@ -34,15 +34,37 @@ class LogstashFormatterBase(logging.Formatter):
             easy_types = (basestring, bool, dict, float, int, long, list, type(None))
         else:
             easy_types = (str, bool, dict, float, int, list, type(None))
-
+        containers = (dict, set, list)
         fields = {}
-
-        for key, value in record.__dict__.items():
-            if key not in skip_list:
-                if isinstance(value, easy_types):
+        if first:
+            for key, value in record.__dict__.items():
+                if key not in skip_list or not first:
+                    if isinstance(value, containers):
+                        fields[key] = self.get_extra_fields(value, first=False)
+                    elif isinstance(value, easy_types):
+                        fields[key] = value
+                    else:
+                        fields[key] = repr(value)
+        elif type(record) == dict:
+            for key, value in record.items():
+                if isinstance(value, containers):
+                    fields[key] = self.get_extra_fields(value, first=False)
+                elif isinstance(value, easy_types):
                     fields[key] = value
                 else:
                     fields[key] = repr(value)
+        elif type(record) == list or type(record) == set:
+            tmp = []
+            for value in record:
+                tmp.append(self.get_extra_fields(value, first=False))
+            return tmp
+        else:
+            if isinstance(record, easy_types):
+                return record
+            else:
+                return repr(record)
+
+
 
         return fields
 
