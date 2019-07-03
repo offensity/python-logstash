@@ -1,11 +1,21 @@
-python-logstash
-===============
+python-logstash fork
+====================
 
 Python logging handler for Logstash.
+
+This fork has some added features:
+  - support for nested data structures
+  - support for set as datatype
+  - new http handler with support for ssl and basic auth
+
 http://logstash.net/
 
 Changelog
 =========
+0.5.0
+  - New HTTP Handler
+0.4.8
+  - Add support for nested data and sets
 0.4.7
   - Add couple of sensitive fields to the skip_list
 0.4.6
@@ -39,7 +49,7 @@ Installation
 
 Using pip::
 
-  pip install python-logstash
+  pip install python-logstash-nested
 
 Usage
 =====

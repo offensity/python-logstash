@@ -1,14 +1,14 @@
 from distutils.core import setup
 setup(
-    name='python-logstash',
+    name='python-logstash-nested',
     packages=['logstash'],
-    version='0.4.7',
+    version='0.4.9',
     description='Python logging handler for Logstash.',
     long_description=open('README.rst').read(),
     license='MIT',
     author='Volodymyr Klochan',
     author_email='vklochan@gmail.com',
-    url='https://github.com/vklochan/python-logstash',
+    url='https://github.com/offensity/python-logstash',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',

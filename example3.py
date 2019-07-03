@@ -2,11 +2,11 @@ import logging
 import logstash
 import sys
 
-host = 'localhost'
+host = '127.0.0.1'
 
 test_logger = logging.getLogger('python-logstash-logger')
 test_logger.setLevel(logging.INFO)
-test_logger.addHandler(logstash.LogstashHandler(host, 5959, version=1))
+test_logger.addHandler(logstash.HTTPLogstashHandler(host, 1337, version=1, ssl=True, verify=True, username="user", password="pw"))
 # test_logger.addHandler(logstash.TCPLogstashHandler(host, 5959, version=1))
 
 test_logger.error('python-logstash: test logstash error message.')
