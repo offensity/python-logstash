@@ -12,6 +12,9 @@ http://logstash.net/
 
 Changelog
 =========
+0.5.1
+  - New Config for Field / Stacktrace Limit
+  - Removed Version 0 (old scheme)
 0.5.0
   - New HTTP Handler
 0.4.8

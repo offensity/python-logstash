@@ -14,19 +14,17 @@ class HTTPLogstashHandler(NullHandler, object):
     :param ssl: Use SSL for logstash server (default False).
     :param message_type: The type of the message (default logstash).
     :param fqdn; Indicates whether to show fully qualified domain name or not (default False).
-    :param version: version of logstash event schema (default is 0).
     :param tags: list of tags for a logger (default is None).
     :param verify: verify ssl (default is True)
     :param username: basic_auth user (default is None)
     :param password: basic_auth user (default is None)
     """
 
-    def __init__(self, host, port=80, ssl=False, message_type='logstash', tags=None, fqdn=False, version=0, verify=True, username=None, password=None):
+    def __init__(self, host, port=80, ssl=False, message_type='logstash', tags=None, fqdn=False, verify=True, username=None, password=None):
         super(NullHandler, self).__init__()
-        if version == 1:
-            self.formatter = formatter.LogstashFormatterVersion1(message_type, tags, fqdn)
-        else:
-            self.formatter = formatter.LogstashFormatterVersion0(message_type, tags, fqdn)
+
+        self.formatter = formatter.LogstashFormatter(message_type, tags, fqdn)
+
         if username and password:
             self.auth = HTTPBasicAuth(username, password)
         else:

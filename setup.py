@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
     name='python-logstash-nested',
     packages=['logstash'],
-    version='0.4.9',
+    version='0.5.1',
     description='Python logging handler for Logstash.',
     long_description=open('README.rst').read(),
     license='MIT',

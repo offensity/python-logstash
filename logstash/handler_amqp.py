@@ -33,7 +33,6 @@ class AMQPLogstashHandler(SocketHandler, object):
 
     :param tags: list of tags for a logger (default is None).
     :param message_type: The type of the message (default logstash).
-    :param version: version of logstash event schema (default is 0).
 
     :param extra_fields: Send extra fields on the log record to graylog
         if true (the default)
@@ -46,7 +45,7 @@ class AMQPLogstashHandler(SocketHandler, object):
     def __init__(self, host='localhost', port=5672, username='guest',
                  password='guest', exchange='logstash', exchange_type='fanout',
                  virtual_host='/', message_type='logstash', tags=None,
-                 durable=False, passive=False, version=0, extra_fields=True,
+                 durable=False, passive=False, extra_fields=True,
                  fqdn=False, facility=None, exchange_routing_key=''):
 
 
@@ -66,9 +65,7 @@ class AMQPLogstashHandler(SocketHandler, object):
 
         # Extract Logstash paramaters
         self.tags = tags or []
-        fn = formatter.LogstashFormatterVersion1 if version == 1 \
-            else formatter.LogstashFormatterVersion0
-        self.formatter = fn(message_type, tags, fqdn)
+        self.formatter = formatter.LogstashFormatter(message_type, tags, fqdn)
 
         # Standard logging parameters
         self.extra_fields = extra_fields

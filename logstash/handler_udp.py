@@ -9,7 +9,6 @@ class UDPLogstashHandler(TCPLogstashHandler, DatagramHandler):
     :param port: The port of the logstash server (default 5959).
     :param message_type: The type of the message (default logstash).
     :param fqdn; Indicates whether to show fully qualified domain name or not (default False).
-    :param version: version of logstash event schema (default is 0).
     :param tags: list of tags for a logger (default is None).
     """
 
