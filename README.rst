@@ -7,6 +7,8 @@ This fork has some added features:
   - support for nested data structures
   - support for set as datatype
   - new http handler with support for ssl and basic auth
+  - New config for limiting strings, containers and stacktraces
+  - Version 0 Logging has been removed
 
 http://logstash.net/
 

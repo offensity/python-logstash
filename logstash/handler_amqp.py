@@ -40,13 +40,17 @@ class AMQPLogstashHandler(SocketHandler, object):
         host (socket.getfqdn()).
     :param facility: Replace facility with specified value. If specified,
         record.name will be passed as `logger` parameter.
+    :param limit_stacktrace: limit characters for stacktraces
+    :param limit_string_fields: limit characters for string fields
+    :param limit_containers: limit length of containers (dict, list, set)
     """
 
     def __init__(self, host='localhost', port=5672, username='guest',
                  password='guest', exchange='logstash', exchange_type='fanout',
                  virtual_host='/', message_type='logstash', tags=None,
                  durable=False, passive=False, extra_fields=True,
-                 fqdn=False, facility=None, exchange_routing_key=''):
+                 fqdn=False, facility=None, exchange_routing_key='',
+                 limit_stacktrace=0, limit_string_fields=0, limit_containers=0):
 
 
         # AMQP parameters
@@ -65,7 +69,9 @@ class AMQPLogstashHandler(SocketHandler, object):
 
         # Extract Logstash paramaters
         self.tags = tags or []
-        self.formatter = formatter.LogstashFormatter(message_type, tags, fqdn)
+        self.formatter = formatter.LogstashFormatter(message_type, tags, fqdn, limit_stacktrace=limit_stacktrace,
+                                                     limit_string_fields=limit_string_fields,
+                                                     limit_containers=limit_containers)
 
         # Standard logging parameters
         self.extra_fields = extra_fields

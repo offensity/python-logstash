@@ -12,8 +12,7 @@ test_logger = logging.getLogger('python-logstash-logger')
 test_logger.setLevel(logging.INFO)
 
 # add the handler
-test_logger.addHandler(logstash.AMQPLogstashHandler(version=1,
-                                                    host=host,
+test_logger.addHandler(logstash.AMQPLogstashHandler(host=host,
                                                     durable=True,
                                                     username=username,
                                                     password=password,

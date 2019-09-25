@@ -18,12 +18,18 @@ class HTTPLogstashHandler(NullHandler, object):
     :param verify: verify ssl (default is True)
     :param username: basic_auth user (default is None)
     :param password: basic_auth user (default is None)
+    :param limit_stacktrace: limit characters for stacktraces
+    :param limit_string_fields: limit characters for string fields
+    :param limit_containers: limit length of containers (dict, list, set)
     """
 
-    def __init__(self, host, port=80, ssl=False, message_type='logstash', tags=None, fqdn=False, verify=True, username=None, password=None):
+    def __init__(self, host, port=80, ssl=False, message_type='logstash', tags=None, fqdn=False, verify=True,
+                 username=None, password=None, limit_stacktrace=0, limit_string_fields=0, limit_containers=0):
         super(NullHandler, self).__init__()
 
-        self.formatter = formatter.LogstashFormatter(message_type, tags, fqdn)
+        self.formatter = formatter.LogstashFormatter(message_type, tags, fqdn, limit_stacktrace=limit_stacktrace,
+                                                     limit_string_fields=limit_string_fields,
+                                                     limit_containers=limit_containers)
 
         if username and password:
             self.auth = HTTPBasicAuth(username, password)

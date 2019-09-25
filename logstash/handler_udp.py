@@ -10,6 +10,9 @@ class UDPLogstashHandler(TCPLogstashHandler, DatagramHandler):
     :param message_type: The type of the message (default logstash).
     :param fqdn; Indicates whether to show fully qualified domain name or not (default False).
     :param tags: list of tags for a logger (default is None).
+    :param limit_stacktrace: limit characters for stacktraces
+    :param limit_string_fields: limit characters for string fields
+    :param limit_containers: limit length of containers (dict, list, set)
     """
 
     def makePickle(self, record):

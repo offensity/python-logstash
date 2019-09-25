@@ -11,14 +11,24 @@ except ImportError:
 
 class LogstashFormatterBase(logging.Formatter):
 
-    def __init__(self, message_type='Logstash', tags=None, fqdn=False):
+    limit_stacktrace = 0
+
+    def __init__(self, message_type='Logstash', tags=None, fqdn=False, limit_stacktrace=0, limit_string_fields=0, limit_containers=0):
         self.message_type = message_type
         self.tags = tags if tags is not None else []
+        LogstashFormatterBase.limit_stacktrace = limit_stacktrace
+        self.limit_string_fields = limit_string_fields
+        self.limit_containers = limit_containers
 
         if fqdn:
             self.host = socket.getfqdn()
         else:
             self.host = socket.gethostname()
+
+    def limit_string_field(self, value):
+        if self.limit_string_fields == 0:
+            return value
+        return value[:self.limit_string_fields] + (value[self.limit_string_fields:] and '...Truncated...')
 
     def get_extra_fields(self, record, first=True):
         # The list contains all the attributes listed in
@@ -31,9 +41,9 @@ class LogstashFormatterBase(logging.Formatter):
             'auth_token', 'password')
 
         if sys.version_info < (3, 0):
-            easy_types = (basestring, bool, dict, float, int, long, list, type(None))
+            easy_types = (basestring, bool, float, int, long, type(None))
         else:
-            easy_types = (str, bool, dict, float, int, list, type(None))
+            easy_types = (str, bool, float, int, type(None))
         containers = (dict, set, list)
         fields = {}
         if first:
@@ -41,30 +51,44 @@ class LogstashFormatterBase(logging.Formatter):
                 if key not in skip_list or not first:
                     if isinstance(value, containers):
                         fields[key] = self.get_extra_fields(value, first=False)
+                    elif type(value) == str:
+                        fields[key] = self.limit_string_field(value)
                     elif isinstance(value, easy_types):
                         fields[key] = value
                     else:
-                        fields[key] = repr(value)
+                        fields[key] = self.limit_string_field(repr(value))
         elif type(record) == dict:
+            counter = 0
             for key, value in record.items():
+                counter += 1
+                if self.limit_containers != 0 and counter > self.limit_containers:
+                    fields['WARNING'] = "...Truncated..."
+                    break
                 if isinstance(value, containers):
                     fields[key] = self.get_extra_fields(value, first=False)
+                elif type(value) == str:
+                    fields[key] = self.limit_string_field(value)
                 elif isinstance(value, easy_types):
                     fields[key] = value
                 else:
-                    fields[key] = repr(value)
+                    fields[key] = self.limit_string_field(repr(value))
         elif type(record) == list or type(record) == set:
             tmp = []
+            counter = 0
             for value in record:
+                counter += 1
+                if self.limit_containers != 0 and counter > self.limit_containers:
+                    tmp.append("...Truncated...")
+                    break
                 tmp.append(self.get_extra_fields(value, first=False))
             return tmp
         else:
+            if type(record) == str:
+                return self.limit_string_field(record)
             if isinstance(record, easy_types):
                 return record
             else:
-                return repr(record)
-
-
+                return self.limit_string_field(repr(record))
 
         return fields
 
@@ -97,7 +121,10 @@ class LogstashFormatterBase(logging.Formatter):
 
     @classmethod
     def format_exception(cls, exc_info):
-        return ''.join(traceback.format_exception(*exc_info)) if exc_info else ''
+        stacktrace = ''.join(traceback.format_exception(*exc_info)) if exc_info else ''
+        if cls.limit_stacktrace == 0:
+            return stacktrace
+        return stacktrace[:cls.limit_stacktrace] + (stacktrace[cls.limit_stacktrace:] and '..')
 
     @classmethod
     def serialize(cls, message):
