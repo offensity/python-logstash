@@ -50,7 +50,8 @@ class HTTPLogstashHandler(NullHandler, object):
         try:
             headers = {'Content-type': 'application/json'}
             r = requests.post(url, auth=self.auth, data=record, verify=self.verify, headers=headers)
-            print(r)
+            if r.status_code != requests.codes.ok:
+                self.handleError(record)
         except Exception:
             self.handleError(record)
 
